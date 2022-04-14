@@ -152,27 +152,28 @@ class GitEmothepGitlab(object):
         print('Exclude Wm* & Default packages')
         for packageDir in os.listdir(configfile.SAGHOME):
             if not packageDir.startswith('Wm') and not packageDir.startswith('Default'):
-                projectName = self.__calculate_project_name(packageDir)
-                print('%s - %s'%(projectName, packageDir))
-                gitlab_project.import_project(configfile.NAMESPACE, projectName, packageDir)
-                src_path = configfile.SAGHOME+'/'+packageDir
-                if not os.path.exists(configfile.LOCALREPO+'/'+projectName):
-                    self.__checkout_git_project(gitlab_project.project_object, projectName)
-                    os.chdir(configfile.LOCALREPO+'/'+projectName)
-                    dst_path = configfile.LOCALREPO+'/'+projectName+configfile.PATH_REPO_PACKAGES+packageDir
-                    if not os.path.exists(dst_path):
-                        print('Try to move the current package to local package repository')
-                        shutil.move(src_path, dst_path)
-                        print('Success!')
-                        print('Create symlink')
-                        os.symlink(dst_path, src_path)
-                        print('Success!')
-                        self.__add_git_project()
-                        self.__commit_git_project('Ajout du package')
-                        self.__push_git_project()
-                    os.chdir(configfile.LOCALREPO)
-                    print('End for the package %s'% packageDir)
-                    print('===========================')
+                if os.path.isdir():
+                    projectName = self.__calculate_project_name(packageDir)
+                    print('%s - %s'%(projectName, packageDir))
+                    gitlab_project.import_project(configfile.NAMESPACE, projectName, packageDir)
+                    src_path = configfile.SAGHOME+'/'+packageDir
+                    if not os.path.exists(configfile.LOCALREPO+'/'+projectName):
+                        self.__checkout_git_project(gitlab_project.project_object, projectName)
+                        os.chdir(configfile.LOCALREPO+'/'+projectName)
+                        dst_path = configfile.LOCALREPO+'/'+projectName+configfile.PATH_REPO_PACKAGES+packageDir
+                        if not os.path.exists(dst_path):
+                            print('Try to move the current package to local package repository')
+                            shutil.move(src_path, dst_path)
+                            print('Success!')
+                            print('Create symlink')
+                            os.symlink(dst_path, src_path)
+                            print('Success!')
+                            self.__add_git_project()
+                            self.__commit_git_project('Ajout du package')
+                            self.__push_git_project()
+                        os.chdir(configfile.LOCALREPO)
+                        print('End for the package %s'% packageDir)
+                        print('===========================')
 
 
 class GitLabProject(object):
@@ -190,7 +191,7 @@ class GitLabProject(object):
 
     def find_project(self, identifier):
         try:
-            print('gitLab - find project with name')
+            print('gitLab - find project with name %s'% identifier)
             project = self._gitlab.projects.get(identifier)
             print('gitLab - find project')
         except Exception as e:
@@ -238,7 +239,7 @@ class GitLabProject(object):
                 time.sleep(1)
                 project.refresh()
             self.project_object = self._gitlab.projects.get(output['id'])
-            print('gitLab - Import status :'% self.project_object.import_status)  
+            print('gitLab - Import status :'% self.project_object)  
         else:
             print('gitLab - Exist, nothing to do!')
 
