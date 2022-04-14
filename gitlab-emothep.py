@@ -227,7 +227,7 @@ class GitLabProject(object):
                 print('gitLab - export finish')
         
     def import_project(self, namespace, repositoryName, packageName):
-        print('GitLab - Check if current project exist  to add %s to project %s'% (packageName))
+        print('GitLab - Check if current project exist  to add %s to project %s'% (repositoryName, packageName))
         if not self.exists_project(namespace, repositoryName):
             print('GitLab - Trying to add %s to project %s'% (repositoryName, packageName))
             output = self._gitlab.projects.import_project(file=open(configfile.TEMPLATEREPO, 'rb'),namespace=namespace,path=repositoryName, name=packageName)
