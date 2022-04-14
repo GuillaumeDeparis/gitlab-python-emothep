@@ -1,5 +1,7 @@
 # gitlab-python-emothep
 usage:
+	install requierement
+	pip install -r requirements.txt
 	gitlab-emothep.py command
 exportTemplate      Export repository from gitlab specified in the configFile
             importPackage       Import all packages to remote repository

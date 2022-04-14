@@ -1,6 +1,4 @@
 import argparse
-from ctypes import sizeof
-from xmlrpc.client import boolean
 import configfile
 import time
 import re
