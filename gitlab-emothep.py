@@ -9,7 +9,9 @@ import shutil
 import subprocess
 import sys
 
-class GitEmothepGitlab(object):
+SYMLINK = False
+
+class GitEmothepGitlab(object):    
     def __init__(self):
         #if __debug__:
         #    self.import_package_gitlab()
@@ -62,6 +64,9 @@ class GitEmothepGitlab(object):
     def importPackage(self):
         parser = argparse.ArgumentParser(
         description='Add all packages from current instance to remote repository')
+        parser.add_argument('-s', '--symlink', action='store_false')
+        args = parser.parse_args(sys.argv[2:])
+        SYMLINK = args.symlink
         self.__import_package_gitlab()
     
     def exportTemplate(self):
@@ -165,9 +170,12 @@ class GitEmothepGitlab(object):
                             print('Try to move the current package to local package repository')
                             shutil.move(src_path, dst_path)
                             print('Success!')
-                            print('Create symlink')
-                            os.symlink(dst_path, src_path)
-                            print('Success!')
+                            
+                            if SYMLINK:
+                                print('Create symlink')
+                                os.symlink(dst_path, src_path)
+                                print('Success!')
+                            
                             self.__add_git_project()
                             self.__commit_git_project('Ajout du package')
                             self.__push_git_project()
