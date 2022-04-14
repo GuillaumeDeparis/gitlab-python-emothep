@@ -1,4 +1,4 @@
-#! /usr/bin/python
+#! /usr/bin/python3
 import argparse
 import configfile
 import time
@@ -201,7 +201,7 @@ class GitLabProject(object):
                 project = self.project_object.get(current_user.username + '/' + identifier)
                 print('gitLab - project find in user space')
             except Exception as e:
-                print('gitLag - exception %s'% e)
+                print('gitLab - exception %s'% e)
                 return None
 
         return project
@@ -228,9 +228,9 @@ class GitLabProject(object):
                 print('gitLab - export finish')
         
     def import_project(self, namespace, repositoryName, packageName):
-        print('GitLab - Check if current project exist  to add %s to project %s'% (repositoryName, packageName))
+        print('gitLab - Check if current project exist  to add %s to project %s'% (repositoryName, packageName))
         if not self.exists_project(namespace, repositoryName):
-            print('GitLab - Trying to add %s to project %s'% (repositoryName, packageName))
+            print('gitLab - Trying to add %s to project %s'% (repositoryName, packageName))
             output = self._gitlab.projects.import_project(file=open(configfile.TEMPLATEREPO, 'rb'),namespace=namespace,path=repositoryName, name=packageName)
             # Get a ProjectImport object to track the import status
             project = self._gitlab.projects.get(output['id'], lazy=True).imports.get()
@@ -238,9 +238,9 @@ class GitLabProject(object):
                 time.sleep(1)
                 project.refresh()
             self.project_object = self._gitlab.projects.get(output['id'])
-            print('GitLab - Import status :'% self.project_object.import_status)  
+            print('gitLab - Import status :'% self.project_object.import_status)  
         else:
-            print('GitLab - Exist, nothing to do!')
+            print('gitLab - Exist, nothing to do!')
 
 if __name__ == '__main__':
     GitEmothepGitlab()
