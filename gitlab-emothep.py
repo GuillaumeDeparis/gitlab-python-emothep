@@ -152,6 +152,7 @@ class GitEmothepGitlab(object):
         for packageDir in os.listdir(configfile.SAGHOME):
             if not packageDir.startswith('Wm') and not packageDir.startswith('Default'):
                 projectName = self.__calculate_project_name(packageDir)
+                print('%s - %s'%(projectName, packageDir))
                 gitlab_project.import_project(configfile.NAMESPACE, projectName, packageDir)
                 src_path = configfile.SAGHOME+'/'+packageDir
                 if not os.path.exists(configfile.LOCALREPO+'/'+projectName):
