@@ -9,7 +9,8 @@ import shutil
 import subprocess
 import sys
 import colorama 
-from colorama import Fore
+from colorama import init, Fore
+init(autoreset=True)
 
 SYMLINK = False
 
