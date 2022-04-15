@@ -8,6 +8,8 @@ import gitlab
 import shutil
 import subprocess
 import sys
+import colorama 
+from colorama import Fore
 
 SYMLINK = False
 
@@ -34,7 +36,7 @@ class GitEmothepGitlab(object):
             # exclude the rest of the args too, or validation will fail
         args = parser.parse_args(sys.argv[1:2])
         if not hasattr(self, args.command):
-            print('Unrecognized command')
+            print(Fore.RED + 'Unrecognized command')
             parser.print_help()
             exit(1)
         # use dispatch pattern to invoke method with same name
@@ -98,7 +100,7 @@ class GitEmothepGitlab(object):
     def __push_git_project(self):
         print('Trying to push on origin')
         subprocess.call(["git", "push", "origin"])
-        print('Success!')
+        print(Fore.GREEN + 'Success!')
     
     def __export_template(self):
         print('Export template : %s'% configfile.TEMPLATEREPO)
@@ -111,7 +113,7 @@ class GitEmothepGitlab(object):
         output = subprocess.check_output(["git", "status", "-s"])
         if len(output) == 0:
             if not all:
-                print("%s: Nothing to do!"%projectName)
+                print(Fore.GREEN + "%s: Nothing to do!"%projectName)
         else:
             if not all:
                 print('%s:'% projectName)
@@ -146,11 +148,11 @@ class GitEmothepGitlab(object):
             print('Trying to connect to gitLab: %s'% configfile.GITLAB_URL)
             gitlab_instance = gitlab.Gitlab(url=gitlab_url, private_token=gitlab_token, api_version=4)
             gitlab_instance.auth()
-            print('Connected!')
+            print(Fore.GREEN + 'Connected!')
         except (gitlab.exceptions.GitlabAuthenticationError, gitlab.exceptions.GitlabGetError) as e:
-            print('Error d''authentification')
+            print(Fore.RED + 'Error d''authentification')
         except (gitlab.exceptions.GitlabHttpError) as e:
-            print("Failed to connect to GitLab server: %s. \
+            print(Fore.RED + "Failed to connect to GitLab server: %s. \
                 GitLab remove Session API now that private tokens are removed from user API endpoints since version 10.2.")
 
         return gitlab_instance
@@ -173,14 +175,13 @@ class GitEmothepGitlab(object):
                             os.chdir(configfile.LOCALREPO+'/'+projectName)
                             dst_path = configfile.LOCALREPO+'/'+projectName+configfile.PATH_REPO_PACKAGES+packageDir
                             if not os.path.exists(dst_path):
-                                print('Try to move the current package to local package repository')
-                                shutil.move(src_path, dst_path)
-                                print('Success!')
-                                
                                 if SYMLINK:
+                                    print('Try to move the current package to local package repository')
+                                    shutil.move(src_path, dst_path)
+                                    print(Fore.GREEN + 'Success!')
                                     print('Create symlink')
                                     os.symlink(dst_path, src_path)
-                                    print('Success!')
+                                    print(Fore.GREEN + 'Success!')
                                 
                                 self.__add_git_project()
                                 self.__commit_git_project('Ajout du package')
@@ -232,7 +233,7 @@ class GitLabProject(object):
                 export.refresh()
             with open('./'+project.name+'.zip', 'wb') as f:
                 export.download(streamed=True, action=f.write)
-                print('gitLab - export finish')
+                print(Fore.GREEN + 'gitLab - export finish')
         
     def import_project(self, namespace, repositoryName, packageName):
         print('gitLab - Check if current project exist  to add %s to project %s'% (repositoryName, packageName))
@@ -245,9 +246,9 @@ class GitLabProject(object):
                 time.sleep(1)
                 project.refresh()
             self.project_object = self._gitlab.projects.get(output['id'])
-            print('gitLab - Import status :'% self.project_object)  
+            print(Fore.GREEN + 'gitLab - Import status :'% self.project_object)  
         else:
-            print('gitLab - Exist, nothing to do!')
+            print(Fore.GREEN + 'gitLab - Exist, nothing to do!')
 
 if __name__ == '__main__':
     GitEmothepGitlab()
