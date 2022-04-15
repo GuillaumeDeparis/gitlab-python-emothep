@@ -69,13 +69,13 @@ class GitEmothepGitlab(object):
         parser = argparse.ArgumentParser(
         description='Add packages from current instance to remote repository if no packages passed in parameter all packages are imported.')
         parser.add_argument('-p', '--packages', help='package list with ; as separator')
-        parser.add_argmuent('-u', '--user')
-        parser.add_argument('-pwd', '--password')
+        #parser.add_argument('-u', '--user')
+        #parser.add_argument('-pwd', '--password')
         parser.add_argument('-s', '--symlink', action='store_false')
         args = parser.parse_args(sys.argv[2:])
         SYMLINK = args.symlink
-        GITLAB_USERNAME = args.user
-        GITLAB_PASSWORD = args.password
+        #GITLAB_USERNAME = args.user
+        #GITLAB_PASSWORD = args.password
         packages = None
         if args.packages is not None:
             packages = args.packages.split(';')
@@ -90,11 +90,10 @@ class GitEmothepGitlab(object):
     ###
     # Git Function
     def __config_git(self):
+        subprocess.check_output(["git", "config", "--global ", "user.email", """guillaume.deparis@e-mothep.com"""])
         subprocess.check_output(["git", "config", "credential.helper", "''cache --timeout=3600''"])
     def __checkout_git_project(self, gitlab_project, projectName):
         print('Checkout remote project to local repository dedicated to the package')
-        #repo_user_password = gitlab_project.http_url_to_repo.replace('http://', 'http://guillaume.deparis:jXZWUAAb1V2Lpbt2TG2e@')
-        #repo_user_password = gitlab_project.ssh_url_to_repo.replace('git@', 'guillaume.deparis@')
         repo_user_password = gitlab_project.http_url_to_repo
         subprocess.check_output(["git", "clone", repo_user_password, configfile.LOCALREPO+'/'+projectName])
 
@@ -256,6 +255,7 @@ class GitLabProject(object):
             while project.import_status != 'finished':
                 time.sleep(1)
                 project.refresh()
+                print('project.import_status : %s'% project.import_status)
             self.project_object = self._gitlab.projects.get(output['id'])
             print(Fore.GREEN + 'gitLab - Import status :'% self.project_object)  
         else:
