@@ -107,7 +107,7 @@ class GitEmothepGitlab(object):
 
     def __push_git_project(self):
         print('Trying to push on origin')
-        subprocess.call(["git", "push", "origin"])
+        subprocess.call(["git", "push", "origin", "master"])
         print(Fore.GREEN + 'Success!')
     
     def __export_template(self):
