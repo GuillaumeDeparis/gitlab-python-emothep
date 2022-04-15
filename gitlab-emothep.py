@@ -8,7 +8,6 @@ import gitlab
 import shutil
 import subprocess
 import sys
-from tokenize import tokenize
 
 SYMLINK = False
 
@@ -164,7 +163,7 @@ class GitEmothepGitlab(object):
             if not packageDir.startswith('Wm') and not packageDir.startswith('Default') and not packageDir.startswith('Zz') and not packageDir.startswith('Wx'):
                 if packages is None or (packages is not None and packageDir in packages):
                     print('%s : %s'% (packageDir, os.path.isdir(configfile.SAGHOME+'/'+packageDir)))
-                    """if os.path.isdir(configfile.SAGHOME+'/'+packageDir):
+                    if os.path.isdir(configfile.SAGHOME+'/'+packageDir):
                         projectName = self.__calculate_project_name(packageDir)
                         print('%s - %s'%(projectName, packageDir))
                         gitlab_project.import_project(configfile.NAMESPACE, projectName, packageDir)
@@ -188,7 +187,7 @@ class GitEmothepGitlab(object):
                                 self.__push_git_project()
                             os.chdir(configfile.LOCALREPO)
                             print('End for the package %s'% packageDir)
-                            print('===========================')"""
+                            print('===========================')
 
 
 class GitLabProject(object):
@@ -206,20 +205,12 @@ class GitLabProject(object):
 
     def find_project(self, identifier):
         try:
-            print('gitLab - find project with name %s'% identifier)
+            print('gitLab - seach project with name %s'% identifier)
             project = self._gitlab.projects.get(identifier)
             print('gitLab - find project')
         except Exception as e:
             print('gitLab - project not find')
-            current_user = self._gitlab.user
-            try:
-                print('gitLab - try to find project in user space')
-                project = self.project_object.get(current_user.username + '/' + identifier)
-                print('gitLab - project find in user space')
-            except Exception as e:
-                print('gitLab - exception %s'% e)
-                return None
-
+            return None
         return project
 
     def exists_project(self, namespace, path):
