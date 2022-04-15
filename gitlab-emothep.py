@@ -86,8 +86,8 @@ class GitEmothepGitlab(object):
 
     def __checkout_git_project(self, gitlab_project, projectName):
         print('Checkout remote project to local repository dedicated to the package')
-        repo_user_password = gitlab_project.http_url_to_repo.replace('http://', 'http://guillaume.deparis:jXZWUAAb1V2Lpbt2TG2e@')
-        #repo_user_password = gitlab_project.ssh_url_to_repo
+        #repo_user_password = gitlab_project.http_url_to_repo.replace('http://', 'http://guillaume.deparis:jXZWUAAb1V2Lpbt2TG2e@')
+        repo_user_password = gitlab_project.ssh_url_to_repo.replace('git@', 'guillaume.deparis@')
         subprocess.check_output(["git", "clone", repo_user_password, configfile.LOCALREPO+'/'+projectName])
 
     def __add_git_project(self):
@@ -183,7 +183,8 @@ class GitEmothepGitlab(object):
                                     print('Create symlink')
                                     os.symlink(dst_path, src_path)
                                     print(Fore.GREEN + 'Success!')
-                                
+                                else:
+                                    shutil.copy(src_path, dst_path)
                                 self.__add_git_project()
                                 self.__commit_git_project('Ajout du package')
                                 self.__push_git_project()
