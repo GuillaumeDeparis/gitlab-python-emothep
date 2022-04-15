@@ -90,7 +90,7 @@ class GitEmothepGitlab(object):
     ###
     # Git Function
     def __config_git(self):
-        subprocess.check_output(["git", "config", "--global ", "user.email", """guillaume.deparis@e-mothep.com"""])
+        subprocess.check_output(["git", "config", "--global", "user.email", """guillaume.deparis@e-mothep.com"""])
         subprocess.check_output(["git", "config", "credential.helper", "''cache --timeout=3600''"])
     def __checkout_git_project(self, gitlab_project, projectName):
         print('Checkout remote project to local repository dedicated to the package')
@@ -257,7 +257,7 @@ class GitLabProject(object):
                 project.refresh()
                 print('project.import_status : %s'% project.import_status)
             self.project_object = self._gitlab.projects.get(output['id'])
-            print(Fore.GREEN + 'gitLab - Import status :'% self.project_object)  
+            print(Fore.GREEN + 'gitLab - Import successfull')
         else:
             print(Fore.GREEN + 'gitLab - Exist, nothing to do!')
 
