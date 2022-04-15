@@ -13,6 +13,8 @@ from colorama import init, Fore
 init(autoreset=True)
 
 SYMLINK = False
+GITLAB_USERNAME = ''
+GITLAB_PASSWORD = ''
 
 class GitEmothepGitlab(object):    
     def __init__(self):
@@ -67,9 +69,13 @@ class GitEmothepGitlab(object):
         parser = argparse.ArgumentParser(
         description='Add packages from current instance to remote repository if no packages passed in parameter all packages are imported.')
         parser.add_argument('-p', '--packages', help='package list with ; as separator')
+        parser.add_argmuent('-u', '--user')
+        parser.add_argument('-pwd', '--password')
         parser.add_argument('-s', '--symlink', action='store_false')
         args = parser.parse_args(sys.argv[2:])
         SYMLINK = args.symlink
+        GITLAB_USERNAME = args.user
+        GITLAB_PASSWORD = args.password
         packages = None
         if args.packages is not None:
             packages = args.packages.split(';')
@@ -83,11 +89,13 @@ class GitEmothepGitlab(object):
     
     ###
     # Git Function
-
+    def __config_git(self):
+        subprocess.check_output(["git", "config", "credential.helper", "''cache --timeout=3600''"])
     def __checkout_git_project(self, gitlab_project, projectName):
         print('Checkout remote project to local repository dedicated to the package')
         #repo_user_password = gitlab_project.http_url_to_repo.replace('http://', 'http://guillaume.deparis:jXZWUAAb1V2Lpbt2TG2e@')
-        repo_user_password = gitlab_project.ssh_url_to_repo.replace('git@', 'guillaume.deparis@')
+        #repo_user_password = gitlab_project.ssh_url_to_repo.replace('git@', 'guillaume.deparis@')
+        repo_user_password = gitlab_project.http_url_to_repo
         subprocess.check_output(["git", "clone", repo_user_password, configfile.LOCALREPO+'/'+projectName])
 
     def __add_git_project(self):
@@ -159,6 +167,7 @@ class GitEmothepGitlab(object):
         return gitlab_instance
 
     def __import_package_gitlab(self, packages):
+        self.__config_git()
         gitlab_instance = self.__connect_to_gitlab()
         gitlab_project = GitLabProject(gitlab_instance)
         print('Exclude Wm* & Default packages')
@@ -184,7 +193,7 @@ class GitEmothepGitlab(object):
                                     os.symlink(dst_path, src_path)
                                     print(Fore.GREEN + 'Success!')
                                 else:
-                                    shutil.copy(src_path, dst_path)
+                                    shutil.copytree(src_path, dst_path)
                                 self.__add_git_project()
                                 self.__commit_git_project('Ajout du package')
                                 self.__push_git_project()
