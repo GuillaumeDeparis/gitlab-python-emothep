@@ -15,10 +15,11 @@ init(autoreset=True)
 SYMLINK = False
 GITLAB_USERNAME = ''
 GITLAB_PASSWORD = ''
+CURRENT_PWD = ''
 
 class GitEmothepGitlab(object):    
     def __init__(self):
-        
+        CURRENT_PWD=os.getcwd()
         #    print('Debug mode')
         parser = argparse.ArgumentParser(
                     description='Pretends to be git',
@@ -249,7 +250,7 @@ class GitLabProject(object):
         print('gitLab - Check if current project exist  to add %s to project %s'% (repositoryName, packageName))
         if not self.exists_project(namespace, repositoryName):
             print('gitLab - Trying to add %s to project %s'% (repositoryName, packageName))
-            output = self._gitlab.projects.import_project(file=open(configfile.TEMPLATEREPO, 'rb'),namespace=namespace,path=repositoryName, name=packageName)
+            output = self._gitlab.projects.import_project(file=open(CURRENT_PWD+"/"+configfile.TEMPLATEREPO, 'rb'),namespace=namespace,path=repositoryName, name=packageName)
             # Get a ProjectImport object to track the import status
             project = self._gitlab.projects.get(output['id'], lazy=True).imports.get()
             while project.import_status != 'finished':
