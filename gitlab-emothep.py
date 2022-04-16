@@ -12,11 +12,6 @@ import colorama
 from colorama import init, Fore
 init(autoreset=True)
 
-SYMLINK = False
-GITLAB_USERNAME = ''
-GITLAB_PASSWORD = ''
-CURRENT_PWD = ''
-
 class GitEmothepGitlab(object):    
     def __init__(self):
         CURRENT_PWD=os.getcwd()
@@ -70,18 +65,14 @@ class GitEmothepGitlab(object):
         parser = argparse.ArgumentParser(
         description='Add packages from current instance to remote repository if no packages passed in parameter all packages are imported.')
         parser.add_argument('-p', '--packages', help='package list with ; as separator')
-        #parser.add_argument('-u', '--user')
-        #parser.add_argument('-pwd', '--password')
         parser.add_argument('-s', '--symlink', action='store_false')
         args = parser.parse_args(sys.argv[2:])
-        SYMLINK = args.symlink
-        #GITLAB_USERNAME = args.user
-        #GITLAB_PASSWORD = args.password
+        symlink = args.symlink
         packages = None
         if args.packages is not None:
             packages = args.packages.split(';')
         print(packages)
-        self.__import_package_gitlab(packages)
+        self.__import_package_gitlab(packages, symlink)
     
     def exportTemplate(self):
         parser = argparse.ArgumentParser(
@@ -93,6 +84,7 @@ class GitEmothepGitlab(object):
     def __config_git(self):
         subprocess.check_output(["git", "config", "--global", "user.email", """guillaume.deparis@e-mothep.com"""])
         subprocess.check_output(["git", "config", "credential.helper", "''cache --timeout=3600''"])
+        
     def __checkout_git_project(self, gitlab_project, projectName):
         print('Checkout remote project to local repository dedicated to the package')
         repo_user_password = gitlab_project.http_url_to_repo
@@ -100,7 +92,7 @@ class GitEmothepGitlab(object):
 
     def __update_git_readme(self,packageDir):
         f = open('README.md', 'w')
-        f.write('# %s', packageDir)
+        f.write('# '+packageDir)
         f.close
 
     def __add_git_project(self):
@@ -171,7 +163,7 @@ class GitEmothepGitlab(object):
 
         return gitlab_instance
 
-    def __import_package_gitlab(self, packages):
+    def __import_package_gitlab(self, packages, symlink):
         self.__config_git()
         gitlab_instance = self.__connect_to_gitlab()
         gitlab_project = GitLabProject(gitlab_instance)
@@ -190,7 +182,7 @@ class GitEmothepGitlab(object):
                             os.chdir(configfile.LOCALREPO+'/'+projectName)
                             dst_path = configfile.LOCALREPO+'/'+projectName+configfile.PATH_REPO_PACKAGES+packageDir
                             if not os.path.exists(dst_path):
-                                if SYMLINK:
+                                if symlink:
                                     print('Try to move the current package to local package repository')
                                     shutil.move(src_path, dst_path)
                                     print(Fore.GREEN + 'Success!')
