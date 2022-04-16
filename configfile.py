@@ -3,7 +3,7 @@ GITLAB_URL = 'http://10.2.39.18/'
 GITLAB_TOKEN = 'PHFqULc91MVG7jZnZy2g'
 NAMESPACE = 'emothep/run/is-run'
 PATH_REPO_PACKAGES = '/assets/IS/Packages/'
-TEMPLATEREPO = 'webmethods-assets-is-template.zip'
+TEMPLATEREPO = 'C:\git\gitlab-python-emothep\webmethods-assets-is-template.zip'
 LOCALREPO = 'C:\SoftwareAG107\localPackages'
 #[Softwareag]
 SAGHOME='C:\SoftwareAG107\IntegrationServer\instances\default\packages'

@@ -98,6 +98,11 @@ class GitEmothepGitlab(object):
         repo_user_password = gitlab_project.http_url_to_repo
         subprocess.check_output(["git", "clone", repo_user_password, configfile.LOCALREPO+'/'+projectName])
 
+    def __update_git_readme(self,packageDir):
+        f = open('README.md', 'w')
+        f.write('# %s', packageDir)
+        f.close
+
     def __add_git_project(self):
         print('Add all file to init repository')
         subprocess.call(["git", "add", "."])
@@ -194,6 +199,7 @@ class GitEmothepGitlab(object):
                                     print(Fore.GREEN + 'Success!')
                                 else:
                                     shutil.copytree(src_path, dst_path)
+                                self.__update_git_readme(packageDir)
                                 self.__add_git_project()
                                 self.__commit_git_project('Ajout du package')
                                 self.__push_git_project()
@@ -250,7 +256,7 @@ class GitLabProject(object):
         print('gitLab - Check if current project exist  to add %s to project %s'% (repositoryName, packageName))
         if not self.exists_project(namespace, repositoryName):
             print('gitLab - Trying to add %s to project %s'% (repositoryName, packageName))
-            output = self._gitlab.projects.import_project(file=open(CURRENT_PWD+"/"+configfile.TEMPLATEREPO, 'rb'),namespace=namespace,path=repositoryName, name=packageName)
+            output = self._gitlab.projects.import_project(file=open(configfile.TEMPLATEREPO, 'rb'),namespace=namespace,path=repositoryName, name=packageName)
             # Get a ProjectImport object to track the import status
             project = self._gitlab.projects.get(output['id'], lazy=True).imports.get()
             while project.import_status != 'finished':
