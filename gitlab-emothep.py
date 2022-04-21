@@ -130,27 +130,29 @@ class GitEmothepGitlab(object):
         for project in os.listdir():
             os.chdir(configfile.LOCALREPO+"/"+project+configfile.PATH_REPO_PACKAGES)
             for package in os.listdir():
+                if os.path.isdir(configfile.LOCALREPO+"/"+project+configfile.PATH_REPO_PACKAGES+package):
+                    print('Delete symlink in packages repository')
+                    src_path = configfile.LOCALREPO+"/"+project+configfile.PATH_REPO_PACKAGES+package
+                    dst_path = configfile.SAGHOME+"/"+package
+                    print('dst_path : %s'% dst_path)
+                    os.unlink(dst_path)
+                    print('Symnlink removed')
+                    shutil.move(src_path, dst_path)
+                    print('Package moved')
+
+    def __removeLink(self,projectName):
+        print('Revert symlink to package : %s'% projectName)
+        os.chdir(configfile.LOCALREPO+"/"+projectName+configfile.PATH_REPO_PACKAGES)
+        for package in os.listdir():
+            if os.path.isdir(configfile.LOCALREPO+"/"+projectName+configfile.PATH_REPO_PACKAGES+package):
                 print('Delete symlink in packages repository')
-                src_path = configfile.LOCALREPO+"/"+project+configfile.PATH_REPO_PACKAGES+package
+                src_path = configfile.LOCALREPO+"/"+projectName+configfile.PATH_REPO_PACKAGES+package
                 dst_path = configfile.SAGHOME+"/"+package
                 print('dst_path : %s'% dst_path)
                 os.unlink(dst_path)
                 print('Symnlink removed')
                 shutil.move(src_path, dst_path)
                 print('Package moved')
-
-    def __removeLink(self,projectName):
-        print('Revert symlink to package : %s'% projectName)
-        os.chdir(configfile.LOCALREPO+"/"+projectName+configfile.PATH_REPO_PACKAGES)
-        for package in os.listdir():
-            print('Delete symlink in packages repository')
-            src_path = configfile.LOCALREPO+"/"+projectName+configfile.PATH_REPO_PACKAGES+package
-            dst_path = configfile.SAGHOME+"/"+package
-            print('dst_path : %s'% dst_path)
-            os.unlink(dst_path)
-            print('Symnlink removed')
-            shutil.move(src_path, dst_path)
-            print('Package moved')
 
     
     def __statusProject(self, projectName, all) :
