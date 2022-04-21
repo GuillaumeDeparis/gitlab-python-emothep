@@ -93,6 +93,11 @@ class GitEmothepGitlab(object):
         parser = argparse.ArgumentParser(
             description="Add tag")
         self.__addTag()
+
+    def updatePackage(self):
+        parser = argparse.ArgumentParser(
+            description='Commit all change')
+        self.__update_git_package()
     
     ###
     # Git Function
@@ -118,6 +123,10 @@ class GitEmothepGitlab(object):
         print('Commit change with %s'% message)
         subprocess.call(["git", "commit", "-m "+message])
 
+    def __commit_add_all_git_project(self, message):
+        print('Commit change with %s'% message)
+        subprocess.call(["git", "commit", "-a", "-m "+message])
+
     def __push_git_project(self):
         print('Trying to push on origin')
         subprocess.call(["git", "push", "origin", "master"])
@@ -133,6 +142,25 @@ class GitEmothepGitlab(object):
         for project in os.listdir():
             os.chdir(configfile.LOCALREPO+"/"+project)
             self.__add_git_tag()
+
+    def __update_git_package(self):
+        os.chdir(configfile.LOCALREPO)
+        for projectName in os.listdir():
+            os.chdir(configfile.LOCALREPO+'/'+projectName)
+            output = subprocess.check_output(["git", "status", "-s"])
+            if len(output) == 0:
+                if not all:
+                    print(Fore.GREEN + "%s: Nothing to do!"%projectName)
+            else:
+                if not all:
+                    print('%s:'% projectName)
+                    print(output.decode())
+                else:
+                    print(projectName)
+                self.__commit_add_all_git_project("Update package")
+                self.__push_git_project();
+                self.__add_git_tag();
+            os.chdir(configfile.LOCALREPO)
     
     def __export_template(self):
         print('Export template : %s'% configfile.TEMPLATEREPO)
