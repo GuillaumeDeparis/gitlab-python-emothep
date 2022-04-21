@@ -252,6 +252,7 @@ class GitEmothepGitlab(object):
                                 self.__add_git_project()
                                 self.__commit_git_project('Ajout du package')
                                 self.__push_git_project()
+                                self.__addTag()
                             os.chdir(configfile.LOCALREPO)
                             print('End for the package %s'% packageDir)
                             print('===========================')
