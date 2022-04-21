@@ -128,7 +128,8 @@ class GitEmothepGitlab(object):
         print('Revert symlink to package')
         os.chdir(configfile.LOCALREPO)
         for dir in os.listdir():
-            src_path = configfile.LOCALREPO+"/"+configfile.PATH_REPO_PACKAGES
+            src_path = configfile.LOCALREPO+configfile.PATH_REPO_PACKAGES
+            os.chdir(src_path)
             for package in os.listdir():
                 if not package.startswith('.git'):
                     print('Delete symlink in packages repository')
@@ -143,7 +144,8 @@ class GitEmothepGitlab(object):
         print('Revert symlink to package : %s'% projectName)
         os.chdir(configfile.LOCALREPO+"/"+projectName)
         for dir in os.listdir():
-            src_path = configfile.LOCALREPO+"/"+configfile.PATH_REPO_PACKAGES
+            src_path = configfile.LOCALREPO+configfile.PATH_REPO_PACKAGES
+            os.chdir(src_path)
             print('src_path : %s'% src_path)
             for package in os.listdir():
                 if not package.startswith('.git'):
