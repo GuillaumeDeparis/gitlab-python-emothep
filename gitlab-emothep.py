@@ -157,7 +157,8 @@ class GitEmothepGitlab(object):
                     print(output.decode())
                 else:
                     print(projectName)
-                self.__commit_add_all_git_project("Update package")
+                self.__add_git_project()
+                self.__commit_git_project("Update package")
                 self.__push_git_project();
                 self.__add_git_tag();
             os.chdir(configfile.LOCALREPO)
