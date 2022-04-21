@@ -30,7 +30,7 @@ class GitEmothepGitlab(object):
             statusAll           Return all modified files in all repository
             ''')
 
-        parser.add_argument('command', help='Subcommand to run')
+        parser.add_a rgument('command', help='Subcommand to run')
             # parse_args defaults to [1:] for args, but you need to
             # exclude the rest of the args too, or validation will fail
         args = parser.parse_args(sys.argv[1:2])
@@ -79,12 +79,22 @@ class GitEmothepGitlab(object):
             description="Export template define in configFile")
         self.__export_template()
     
+    def removeLink(self):
+        parser = argparse.ArgumentParser(
+            description="Remove symlink & move package to instance")
+        parser.add_argument('-p', '--projectName', help='project to move')
+        args = parser.parse_args(sys.argv[2:])
+        if args.projectName is not None:
+            self.__removeLink(args.projectName)
+        else:
+            self.__revertProject()
+    
     ###
     # Git Function
     def __config_git(self):
         subprocess.check_output(["git", "config", "--global", "user.email", """guillaume.deparis@e-mothep.com"""])
         subprocess.check_output(["git", "config", "credential.helper", "''cache --timeout=3600''"])
-        
+
     def __checkout_git_project(self, gitlab_project, projectName):
         print('Checkout remote project to local repository dedicated to the package')
         repo_user_password = gitlab_project.http_url_to_repo
@@ -113,6 +123,27 @@ class GitEmothepGitlab(object):
         gitlab_instance = self.__connect_to_gitlab()
         gitlab_project = GitLabProject(gitlab_instance)
         gitlab_project.export_project('emothep/architecture/templates/webmethods-assets-is-template')
+
+    def __revertProject(self):
+        print('Revert symlink to package')
+        os.chdir(configfile.LOCALREPO)
+        for dir in os.listdir():
+            src_path = configfile.LOCALREPO+"/"+configfile.PATH_REPO_PACKAGES
+            for package in os.listdir():
+                print('Delete symlink in packages repository')
+                dst_path = configfile.SAGHOME+"/"+package
+                os.unlink(dst_path)
+                shutil.move(src_path, dst_path)
+
+    def __removeLink(self,projectName):
+        print('Revert symlink to package')
+        os.chdir(configfile.LOCALREPO+"/"+projectName)
+        for dir in os.listdir():
+            src_path = configfile.LOCALREPO+"/"+configfile.PATH_REPO_PACKAGES
+            for package in os.listdir():
+                print('Delete symlink in packages repository')
+                dst_path = configfile.SAGHOME+"/"+package
+                os.unlink(dst_path)
     
     def __statusProject(self, projectName, all) :
         os.chdir(configfile.LOCALREPO+'/'+projectName)
