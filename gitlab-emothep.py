@@ -88,6 +88,11 @@ class GitEmothepGitlab(object):
             self.__removeLink(args.projectName)
         else:
             self.__revertProject()
+
+    def addTag(self):
+        parser = argparse.ArgumentParser(
+            description="Add tag")
+        self.__addTag()
     
     ###
     # Git Function
@@ -117,6 +122,17 @@ class GitEmothepGitlab(object):
         print('Trying to push on origin')
         subprocess.call(["git", "push", "origin", "master"])
         print(Fore.GREEN + 'Success!')
+    
+    def __add_git_tag(self):
+        print('Adding tag')
+        subprocess.call(["git", "tag", "v1.0.0", "HEAD"])
+        subprocess.call(["git", "push", "--tags"])
+
+    def __addTag(self):
+        os.chdir(configfile.LOCALREPO)
+        for project in os.listdir():
+            os.chdir(configfile.LOCALREPO+"/"+project)
+            self.__add_git_tag()
     
     def __export_template(self):
         print('Export template : %s'% configfile.TEMPLATEREPO)
