@@ -127,35 +127,30 @@ class GitEmothepGitlab(object):
     def __revertProject(self):
         print('Revert symlink to package')
         os.chdir(configfile.LOCALREPO)
-        for dir in os.listdir():
-            src_path = configfile.LOCALREPO+configfile.PATH_REPO_PACKAGES
-            os.chdir(src_path)
+        for project in os.listdir():
+            os.chdir(configfile.LOCALREPO+"/"+project+configfile.PATH_REPO_PACKAGES)
             for package in os.listdir():
-                if not package.startswith('.git'):
-                    print('Delete symlink in packages repository')
-                    dst_path = configfile.SAGHOME+"/"+package
-                    print('dst_path : %s'% dst_path)
-                    os.unlink(dst_path)
-                    print('Symnlink removed')
-                    shutil.move(src_path, dst_path)
-                    print('Package moved')
+                print('Delete symlink in packages repository')
+                src_path = configfile.LOCALREPO+"/"+project+configfile.PATH_REPO_PACKAGES+package
+                dst_path = configfile.SAGHOME+"/"+package
+                print('dst_path : %s'% dst_path)
+                os.unlink(dst_path)
+                print('Symnlink removed')
+                shutil.move(src_path, dst_path)
+                print('Package moved')
 
     def __removeLink(self,projectName):
         print('Revert symlink to package : %s'% projectName)
-        os.chdir(configfile.LOCALREPO+"/"+projectName)
-        for dir in os.listdir():
-            src_path = configfile.LOCALREPO+configfile.PATH_REPO_PACKAGES
-            os.chdir(src_path)
-            print('src_path : %s'% src_path)
-            for package in os.listdir():
-                if not package.startswith('.git'):
-                    print('Delete symlink in packages repository')
-                    dst_path = configfile.SAGHOME+"/"+package
-                    print('dst_path : %s'% dst_path)
-                    os.unlink(dst_path)
-                    print('Symnlink removed')
-                    shutil.move(src_path, dst_path)
-                    print('Package moved')
+        os.chdir(configfile.LOCALREPO+"/"+projectName+configfile.PATH_REPO_PACKAGES)
+        for package in os.listdir():
+            print('Delete symlink in packages repository')
+            src_path = configfile.LOCALREPO+"/"+projectName+configfile.PATH_REPO_PACKAGES+package
+            dst_path = configfile.SAGHOME+"/"+package
+            print('dst_path : %s'% dst_path)
+            os.unlink(dst_path)
+            print('Symnlink removed')
+            shutil.move(src_path, dst_path)
+            print('Package moved')
 
     
     def __statusProject(self, projectName, all) :
