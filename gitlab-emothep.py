@@ -30,7 +30,7 @@ class GitEmothepGitlab(object):
             statusAll           Return all modified files in all repository
             ''')
 
-        parser.add_a rgument('command', help='Subcommand to run')
+        parser.add_argument('command', help='Subcommand to run')
             # parse_args defaults to [1:] for args, but you need to
             # exclude the rest of the args too, or validation will fail
         args = parser.parse_args(sys.argv[1:2])
@@ -136,14 +136,20 @@ class GitEmothepGitlab(object):
                 shutil.move(src_path, dst_path)
 
     def __removeLink(self,projectName):
-        print('Revert symlink to package')
+        print('Revert symlink to package : %s'% projectName)
         os.chdir(configfile.LOCALREPO+"/"+projectName)
         for dir in os.listdir():
             src_path = configfile.LOCALREPO+"/"+configfile.PATH_REPO_PACKAGES
+            print('src_path : %s'% src_path)
             for package in os.listdir():
                 print('Delete symlink in packages repository')
                 dst_path = configfile.SAGHOME+"/"+package
+                print('dst_path : %s'% dst_path)
                 os.unlink(dst_path)
+                print('Symnlink removed')
+                shutil.move(src_path, dst_path)
+                print('Package moved')
+
     
     def __statusProject(self, projectName, all) :
         os.chdir(configfile.LOCALREPO+'/'+projectName)
