@@ -65,14 +65,14 @@ class GitEmothepGitlab(object):
         parser = argparse.ArgumentParser(
         description='Add packages from current instance to remote repository if no packages passed in parameter all packages are imported.')
         parser.add_argument('-p', '--packages', help='package list with ; as separator')
-        parser.add_argument('-s', '--symlink', action='store_false')
+        parser.add_argument('-hl', '--hardlink', action='store_false')
         args = parser.parse_args(sys.argv[2:])
-        symlink = args.symlink
+        hardlink = args.hardlink
         packages = None
         if args.packages is not None:
             packages = args.packages.split(';')
         print(packages)
-        self.__import_package_gitlab(packages, symlink)
+        self.__import_package_gitlab(packages, hardlink)
     
     def exportTemplate(self):
         parser = argparse.ArgumentParser(
@@ -81,7 +81,7 @@ class GitEmothepGitlab(object):
     
     def removeLink(self):
         parser = argparse.ArgumentParser(
-            description="Remove symlink & move package to instance")
+            description="Remove hardlink & move package to instance")
         parser.add_argument('-p', '--projectName', help='project to move')
         args = parser.parse_args(sys.argv[2:])
         if args.projectName is not None:
@@ -170,32 +170,32 @@ class GitEmothepGitlab(object):
         gitlab_project.export_project('emothep/architecture/templates/webmethods-assets-is-template')
 
     def __revertProject(self):
-        print('Revert symlink to package')
+        print('Revert hardlink to package')
         os.chdir(configfile.LOCALREPO)
         for project in os.listdir():
             os.chdir(configfile.LOCALREPO+"/"+project+configfile.PATH_REPO_PACKAGES)
             for package in os.listdir():
                 if os.path.isdir(configfile.LOCALREPO+"/"+project+configfile.PATH_REPO_PACKAGES+package):
-                    print('Delete symlink in packages repository')
+                    print('Delete hardlink in packages repository')
                     src_path = configfile.LOCALREPO+"/"+project+configfile.PATH_REPO_PACKAGES+package
                     dst_path = configfile.SAGHOME+"/"+package
                     print('dst_path : %s'% dst_path)
                     os.unlink(dst_path)
-                    print('Symnlink removed')
+                    print('Hardlink removed')
                     shutil.move(src_path, dst_path)
                     print('Package moved')
 
     def __removeLink(self,projectName):
-        print('Revert symlink to package : %s'% projectName)
+        print('Revert hardlink to package : %s'% projectName)
         os.chdir(configfile.LOCALREPO+"/"+projectName+configfile.PATH_REPO_PACKAGES)
         for package in os.listdir():
             if os.path.isdir(configfile.LOCALREPO+"/"+projectName+configfile.PATH_REPO_PACKAGES+package):
-                print('Delete symlink in packages repository')
+                print('Delete hardlink in packages repository')
                 src_path = configfile.LOCALREPO+"/"+projectName+configfile.PATH_REPO_PACKAGES+package
                 dst_path = configfile.SAGHOME+"/"+package
                 print('dst_path : %s'% dst_path)
                 os.unlink(dst_path)
-                print('Symnlink removed')
+                print('Hardlink removed')
                 shutil.move(src_path, dst_path)
                 print('Package moved')
 
@@ -249,7 +249,7 @@ class GitEmothepGitlab(object):
 
         return gitlab_instance
 
-    def __import_package_gitlab(self, packages, symlink):
+    def __import_package_gitlab(self, packages, hardlink):
         self.__config_git()
         gitlab_instance = self.__connect_to_gitlab()
         gitlab_project = GitLabProject(gitlab_instance)
@@ -268,12 +268,12 @@ class GitEmothepGitlab(object):
                             os.chdir(configfile.LOCALREPO+'/'+projectName)
                             dst_path = configfile.LOCALREPO+'/'+projectName+configfile.PATH_REPO_PACKAGES+packageDir
                             if not os.path.exists(dst_path):
-                                if symlink:
+                                if hardlink:
                                     print('Try to move the current package to local package repository')
                                     shutil.move(src_path, dst_path)
                                     print(Fore.GREEN + 'Success!')
-                                    print('Create symlink')
-                                    os.symlink(dst_path, src_path)
+                                    print('Create hardlink')
+                                    os.link(dst_path, src_path)
                                     print(Fore.GREEN + 'Success!')
                                 else:
                                     shutil.copytree(src_path, dst_path)
