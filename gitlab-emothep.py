@@ -28,6 +28,7 @@ class GitEmothepGitlab(object):
             list                List all project already pushed on remote gitlab
             status              Return all modified files in repository
             statusAll           Return all modified files in all repository
+            removeLink          Remove link and move project package in instance
             ''')
 
         parser.add_argument('command', help='Subcommand to run')
@@ -184,6 +185,20 @@ class GitEmothepGitlab(object):
                     print('Hardlink removed')
                     shutil.move(src_path, dst_path)
                     print('Package moved')
+    
+    def __createLink(self, projectName);
+        print('Create hardlink to package : %s'% projectName)
+        os.chdir(configfile.LOCALREPO+"/"+projectName+configfile.PATH_REPO_PACKAGES)
+        for package in os.listdir():
+            if os.path.isdir(configfile.LOCALREPO+"/"+projectName+configfile.PATH_REPO_PACKAGES+package):
+                print('Create hardlink in packages repository')
+                src_path = configfile.LOCALREPO+"/"+projectName+configfile.PATH_REPO_PACKAGES+package
+                dst_path = configfile.SAGHOME+"/"+package
+                print('src_path : %s'% src_path)
+                os.link(src_path)
+                print('Hardlink removed')
+                shutil.move(src_path, dst_path)
+                print('Package moved')
 
     def __removeLink(self,projectName):
         print('Revert hardlink to package : %s'% projectName)

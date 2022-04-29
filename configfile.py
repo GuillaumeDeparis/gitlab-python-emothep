@@ -1,7 +1,7 @@
 #[GitLab]
 GITLAB_URL = 'http://10.2.39.18/'
 GITLAB_TOKEN = 'PHFqULc91MVG7jZnZy2g'
-NAMESPACE = 'emothep/run/is-run'
+NAMESPACE = 'emothep/admin/is-admin'
 PATH_REPO_PACKAGES = '/assets/IS/Packages/'
 TEMPLATEREPO = 'C:\git\gitlab-python-emothep\webmethods-assets-is-template.zip'
 LOCALREPO = 'C:\SoftwareAG107\localPackages'
